@@ -22,8 +22,8 @@
 
 打开 `tools/skin-editor/index.html` 即可使用像素绘制工具，特点包括：
 
-- **帧管理**：预置静止、移动、射击、受伤、使用道具、跳跃以及道具装扮等动作帧分类，每个帧都可独立绘制，并与游戏内角色的标准动画方向保持一致（顺序为下 → 右 → 上 → 左）。
-- **绘制体验**：支持 Shift 直线填充、橡皮擦、背景开关、水平/垂直镜像等实用功能，可自建调色板。
+- **帧管理**：预置头部静止（每个朝向 2 帧）、身体行走（每个朝向 10 帧）以及射击、受伤、使用道具、跳跃和装扮等动作分类，帧顺序与游戏 `player.anm2` 动画保持一致（方向顺序为下 → 右 → 上 → 左），并参考了社区维护的 [Isaac Costume Templates](https://github.com/ddeeddii/isaac-costume-templates) 中 `head.anm2`、`body.anm2` 的帧结构。
+- **绘制体验**：支持 Shift 直线填充、橡皮擦、背景开关、水平/垂直镜像与“复制上一帧”等实用功能，可自建调色板并快捷批量调整多帧动画。
 - **导入导出**：以 `.isaacskin`（本质为 JSON）文件存储所有帧像素、调色板和元信息，可在网页工具中再次导入编辑，并携带 `formatVersion` 等元数据方便游戏侧进行兼容性校验。
 - **实时预览**：右侧提供所有帧的小尺寸预览，方便检查整体效果。
 
@@ -42,7 +42,7 @@
 python tools/build_skin_manifest.py
 ```
 
-该脚本会校验 `mod/exported_skins/` 目录下所有皮肤文件、刷新上述 schema 映射，并生成最新的 `mod/exported_skins/skins_manifest.json` 供游戏读取。若仅需校验而不想改写文件，可添加 `--check-only` 选项。
+该脚本会校验 `mod/exported_skins/` 目录下所有皮肤文件、刷新上述 schema 映射，并生成最新的 `mod/exported_skins/skins_manifest.json` 供游戏读取。若仅需校验而不想改写文件，可添加 `--check-only` 选项。仓库附带的 `example_blank.isaacskin` 展示了完整字段和帧清单，可作为创作新皮肤的起点或验证工具链是否运行正常。
 
 ## Mod 运行机制
 

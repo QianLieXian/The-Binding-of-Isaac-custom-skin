@@ -44,12 +44,17 @@ end
 
 function SkinManager:CloneFrame(frameData)
   local clone = {}
+  local jsonNull = self.json and self.json.null
   for y = 1, self.gridSize do
     local row = frameData and frameData[y]
     clone[y] = {}
     if type(row) == "table" then
       for x = 1, self.gridSize do
-        clone[y][x] = row[x]
+        local value = row[x]
+        if value == jsonNull then
+          value = nil
+        end
+        clone[y][x] = value
       end
     end
   end
