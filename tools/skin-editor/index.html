@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>以撒的结合 自定义皮肤工作室</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <h1>以撒的结合 · 自定义皮肤工作室</h1>
+      <p>在下方的像素画布中绘制角色的每个动作帧，并导出可用于 MOD 的皮肤整合文件。</p>
+    </div>
+    <div class="meta">
+      <label>
+        皮肤名称
+        <input id="skinName" type="text" placeholder="示例：星辰游侠" maxlength="40">
+      </label>
+      <label>
+        作者
+        <input id="skinAuthor" type="text" placeholder="你的名字" maxlength="40">
+      </label>
+    </div>
+  </header>
+  <main class="layout">
+    <aside class="panel panel--left">
+      <h2>帧与动作</h2>
+      <p class="panel-tip">选择需要编辑的动作帧。每个帧都会保存独立的像素图。</p>
+      <nav id="frameList" class="frame-list"></nav>
+      <div class="panel-section">
+        <label for="baseCharacter">原始角色内核</label>
+        <select id="baseCharacter">
+          <option value="Isaac">以撒 (Isaac)</option>
+          <option value="Magdalene">抹大拉 (Magdalene)</option>
+          <option value="Cain">该隐 (Cain)</option>
+          <option value="Judas">犹大 (Judas)</option>
+          <option value="Eve">夏娃 (Eve)</option>
+          <option value="???">？？？ (The Lost)</option>
+          <option value="Azazel">亚巴顿 (Azazel)</option>
+          <option value="Lazarus">拉撒路 (Lazarus)</option>
+          <option value="Eden">伊甸 (Eden)</option>
+          <option value="Custom">自定义/其他</option>
+        </select>
+      </div>
+      <div class="panel-section">
+        <label for="skinNotes">皮肤说明</label>
+        <textarea id="skinNotes" rows="5" placeholder="记录特殊效果、音效或其他说明……"></textarea>
+      </div>
+    </aside>
+    <section class="workspace">
+      <div class="canvas-wrapper">
+        <canvas id="skinCanvas" width="512" height="512" aria-label="皮肤绘制画布"></canvas>
+        <div class="canvas-toolbar">
+          <button id="clearFrame" type="button">清空当前帧</button>
+          <button id="mirrorHorizontal" type="button">水平镜像</button>
+          <button id="mirrorVertical" type="button">垂直镜像</button>
+          <label class="toggle">
+            <input id="toggleGrid" type="checkbox" checked>
+            <span>显示网格</span>
+          </label>
+        </div>
+      </div>
+      <section class="panel panel--right">
+        <h2>绘制工具</h2>
+        <div class="tool-row">
+          <label class="color-picker">
+            <span>画笔颜色</span>
+            <input id="colorPicker" type="color" value="#ffcc00">
+          </label>
+          <label class="color-picker">
+            <span>背景色</span>
+            <input id="backgroundColor" type="color" value="#141414">
+          </label>
+        </div>
+        <div class="tool-row">
+          <label class="checkbox">
+            <input id="eraserToggle" type="checkbox">
+            <span>橡皮擦</span>
+          </label>
+          <label class="checkbox">
+            <input id="previewBackground" type="checkbox" checked>
+            <span>显示背景</span>
+          </label>
+        </div>
+        <div class="palette" id="customPalette"></div>
+        <button id="addPaletteColor" type="button">加入当前颜色到调色板</button>
+
+        <h2>导入 / 导出</h2>
+        <p class="panel-tip">导出文件可放入仓库 <code>mod/exported_skins</code> 目录中。</p>
+        <div class="export-controls">
+          <button id="exportSkin" type="button" class="primary">导出皮肤整合文件</button>
+          <input id="importInput" type="file" accept=".json,.isaacskin" hidden>
+          <button id="importSkin" type="button">导入已有皮肤</button>
+        </div>
+        <div id="exportStatus" class="export-status" role="status" aria-live="polite"></div>
+
+        <h2>实时预览</h2>
+        <div class="preview-grid" id="previewGrid"></div>
+      </section>
+    </section>
+  </main>
+  <footer class="app-footer">
+    <p>提示：绘制时可按住鼠标左键连续绘制，按住 <kbd>Shift</kbd> 可在直线模式下快速填充。</p>
+    <p>制作完成后，请将导出的 <code>.isaacskin</code> 文件复制到仓库的 <code>mod/exported_skins</code> 文件夹中，供 MOD 调用。</p>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>
