@@ -22,7 +22,7 @@
 
 打开 `tools/skin-editor/index.html` 即可使用像素绘制工具，特点包括：
 
-- **帧管理**：预置头部静止（每个朝向 2 帧）、身体行走（每个朝向 10 帧）以及射击、受伤、使用道具、跳跃和装扮等动作分类，帧顺序与游戏 `player.anm2` 动画保持一致（方向顺序为下 → 右 → 上 → 左），并参考了社区维护的 [Isaac Costume Templates](https://github.com/ddeeddii/isaac-costume-templates) 中 `head.anm2`、`body.anm2` 的帧结构。
+- **帧管理**：预置头部静止（每个朝向 2 帧）、身体行走（每个朝向 10 帧）以及射击、受伤、使用道具、药丸动作、跳跃和装扮等分类，帧顺序与游戏 `player.anm2` 动画保持一致（方向顺序为下 → 右 → 上 → 左），并参考了社区维护的 [Isaac Costume Templates](https://github.com/ddeeddii/isaac-costume-templates) 中 `head.anm2`、`body.anm2` 的帧结构。
 - **坐标象限**：画布新增中心坐标轴与四象限参考，可在工具栏勾选“显示象限参考”，并结合下方图例判断当前笔触位于 `(+X, -Y)`、`(-X, -Y)`、`(-X, +Y)` 还是 `(+X, +Y)`，以保持角色在 32×32 网格中的重心一致。
 - **绘制体验**：支持 Shift 直线填充、橡皮擦、背景开关、水平/垂直镜像与“复制上一帧”等实用功能，可自建调色板并快捷批量调整多帧动画。
 - **导入导出**：以 `.isaacskin`（本质为 JSON）文件存储所有帧像素、调色板和元信息，可在网页工具中再次导入编辑，并携带 `formatVersion` 等元数据方便游戏侧进行兼容性校验。
@@ -37,6 +37,8 @@
 - `tools/skin-editor/schema.js`（网页工具使用）；
 - `mod/scripts/skin_schema.lua`（游戏 Mod 使用）。
 - `schema/skin_schema.json` 中的每个帧都带有 `anm2` 元数据，指向原版 `001.000_player.anm2` 中对应的动画与帧序（例如 `WalkDown` 0~9、`HeadRight_Overlay` 0~3），方便网页与 Lua 端在校验时引用统一的官方动画命名。[《IsaacDocs》对 `EntityPlayer` 的说明](https://github.com/wofsauge/IsaacDocs/blob/main/docs/EntityPlayer.md) 同样以这些动画名称为准，可作为进一步扩展 Mod 行为的参考。
+
+为保证药丸操作相关的演出完整，`schema/skin_schema.json` 自 2025 年 10 月起新增 `pill` 分组，覆盖官方动画 `PillEatDown/Right/Up/Left` 的前三帧，以及成功与失败后的 `PillThumbsUp`、`PillThumbsDown` 与负面反应 `PillHoldHead`。网页工具与游戏脚本会同时读取这一分组，确保导入的 `.isaacskin` 在角色吞药、竖起大拇指或抱头难受时均能对应到正确的 `001.000_player.anm2` 帧。
 
 在新增或修改 `.isaacskin` 文件后，请运行：
 
