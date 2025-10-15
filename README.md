@@ -23,6 +23,7 @@
 打开 `tools/skin-editor/index.html` 即可使用像素绘制工具，特点包括：
 
 - **帧管理**：预置头部静止（每个朝向 2 帧）、身体行走（每个朝向 10 帧）以及射击、受伤、使用道具、跳跃和装扮等动作分类，帧顺序与游戏 `player.anm2` 动画保持一致（方向顺序为下 → 右 → 上 → 左），并参考了社区维护的 [Isaac Costume Templates](https://github.com/ddeeddii/isaac-costume-templates) 中 `head.anm2`、`body.anm2` 的帧结构。
+- **坐标象限**：画布新增中心坐标轴与四象限参考，可在工具栏勾选“显示象限参考”，并结合下方图例判断当前笔触位于 `(+X, -Y)`、`(-X, -Y)`、`(-X, +Y)` 还是 `(+X, +Y)`，以保持角色在 32×32 网格中的重心一致。
 - **绘制体验**：支持 Shift 直线填充、橡皮擦、背景开关、水平/垂直镜像与“复制上一帧”等实用功能，可自建调色板并快捷批量调整多帧动画。
 - **导入导出**：以 `.isaacskin`（本质为 JSON）文件存储所有帧像素、调色板和元信息，可在网页工具中再次导入编辑，并携带 `formatVersion` 等元数据方便游戏侧进行兼容性校验。
 - **实时预览**：右侧提供所有帧的小尺寸预览，方便检查整体效果。
@@ -35,6 +36,7 @@
 
 - `tools/skin-editor/schema.js`（网页工具使用）；
 - `mod/scripts/skin_schema.lua`（游戏 Mod 使用）。
+- `schema/skin_schema.json` 中的每个帧都带有 `anm2` 元数据，指向原版 `001.000_player.anm2` 中对应的动画与帧序（例如 `WalkDown` 0~9、`HeadRight_Overlay` 0~3），方便网页与 Lua 端在校验时引用统一的官方动画命名。[《IsaacDocs》对 `EntityPlayer` 的说明](https://github.com/wofsauge/IsaacDocs/blob/main/docs/EntityPlayer.md) 同样以这些动画名称为准，可作为进一步扩展 Mod 行为的参考。
 
 在新增或修改 `.isaacskin` 文件后，请运行：
 
@@ -51,9 +53,16 @@ python tools/build_skin_manifest.py
 - `main.lua`：注册 Mod 并在游戏启动时自动扫描皮肤，提供 `skinlist`/`skinreload` 控制台命令用于调试。
 - `scripts/json.lua`：轻量 JSON 解析器，负责读取 `.isaacskin` 与清单文件。
 - `scripts/skin_manager.lua`：核心逻辑，校验帧完整性、缓存可用皮肤并对外暴露查询接口。
+- `scripts/character_select.lua`：在角色选择界面绘制“自定义皮肤入口”，处理 Tab 聚焦、列表滚动与确认选择，并把结果写入存档。
 - `metadata.xml`：声明 Mod 元数据，方便在游戏内识别。
 
 在游戏控制台执行 `skinlist` 可以快速确认皮肤是否被正确解析。
+
+### 自定义皮肤入口操作指南
+
+- 在角色选择界面按下 <kbd>Tab</kbd> 可将焦点切换到右侧的“自定义皮肤入口”面板；再次按 <kbd>Tab</kbd> 或 <kbd>Esc</kbd> 即可回到原版角色网格。
+- 焦点处于面板时，使用方向键逐项浏览皮肤列表（左右键会以 10 帧为步长翻页），按确认键应用所选皮肤；选择第一项“默认外观”即可恢复原版角色。
+- 面板底部实时显示当前套用的皮肤名称、作者与基础角色信息，所有选择结果都会写入存档并在下次进入角色选择界面时自动恢复，可配合 `skinreload` 命令热刷新列表。
 
 ## 后续开发建议
 

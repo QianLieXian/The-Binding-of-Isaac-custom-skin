@@ -60,6 +60,21 @@
             <input id="toggleGrid" type="checkbox" checked>
             <span>显示网格</span>
           </label>
+          <label class="toggle">
+            <input id="toggleQuadrants" type="checkbox" checked>
+            <span>显示象限参考</span>
+          </label>
+        </div>
+        <div class="canvas-legend" id="quadrantLegend">
+          <h3>坐标象限参考</h3>
+          <p>原点 <strong>(0, 0)</strong> 位于网格中心，向右为 <strong>+X</strong>，向下为 <strong>+Y</strong>。绘制躯干与脚步时，请以中心为对称轴。</p>
+          <ul>
+            <li><span>QⅠ</span>右上象限：<code>(+X, -Y)</code>，适用于举枪、抬头等动作。</li>
+            <li><span>QⅡ</span>左上象限：<code>(-X, -Y)</code>，确保肩部与头顶在此区域保持平衡。</li>
+            <li><span>QⅢ</span>左下象限：<code>(-X, +Y)</code>，常用于后撤或左侧步伐。</li>
+            <li><span>QⅣ</span>右下象限：<code>(+X, +Y)</code>，用来确认向右下迈步时脚尖位置。</li>
+          </ul>
+          <p class="legend-note">提示：虚线交点即脚步落点，保持脚掌宽度与步伐节奏可避免动画跳动。</p>
         </div>
       </div>
       <section class="panel panel--right">

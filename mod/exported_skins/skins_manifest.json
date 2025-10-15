@@ -1,16 +1,5 @@
 {
   "formatVersion": 2,
-  "generatedAt": "2025-10-15T15:55:57Z",
-  "skins": [
-    {
-      "file": "example_blank.isaacskin",
-      "id": "example_blank",
-      "name": "示例 · 空白模板",
-      "author": "Project Team",
-      "baseCharacter": "Isaac",
-      "notes": "演示 .isaacskin 结构，全部帧为空。",
-      "hash": "b06655d3d2aeccf7f0aab69bef220b5d9312c49a",
-      "formatVersion": 2
-    }
-  ]
+  "generatedAt": "2025-10-15T17:09:44Z",
+  "skins": []
 }
