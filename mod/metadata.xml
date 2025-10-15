@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <name>Custom Skin Loader</name>
+  <id>custom_skin_loader</id>
+  <directory>custom_skin_loader</directory>
+  <version>0.1.0</version>
+  <description>Loads .isaacskin files and applies them to the custom player logic.</description>
+  <author>Community Contributors</author>
+  <priority>600</priority>
+</metadata>

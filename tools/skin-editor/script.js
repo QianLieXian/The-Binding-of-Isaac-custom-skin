@@ -1,68 +1,20 @@
 (() => {
-  const GRID_SIZE = 32;
-  const PIXEL_SIZE = 16; // 32 * 16 = 512 canvas
+  const schema = window.ISAAC_SKIN_SCHEMA;
+  if (!schema) {
+    throw new Error("未找到皮肤帧定义，请确认 schema.js 是否正确加载。");
+  }
 
-  const FRAME_GROUPS = [
-    {
-      title: "静止 Idle",
-      frames: [
-        { id: "idle_down", label: "静止 · 面向下" },
-        { id: "idle_up", label: "静止 · 面向上" },
-        { id: "idle_left", label: "静止 · 面向左" },
-        { id: "idle_right", label: "静止 · 面向右" }
-      ]
-    },
-    {
-      title: "移动 Move",
-      frames: [
-        { id: "move_down", label: "移动 · 面向下" },
-        { id: "move_up", label: "移动 · 面向上" },
-        { id: "move_left", label: "移动 · 面向左" },
-        { id: "move_right", label: "移动 · 面向右" }
-      ]
-    },
-    {
-      title: "射击 Shoot",
-      frames: [
-        { id: "shoot_down", label: "射击 · 面向下" },
-        { id: "shoot_up", label: "射击 · 面向上" },
-        { id: "shoot_left", label: "射击 · 面向左" },
-        { id: "shoot_right", label: "射击 · 面向右" }
-      ]
-    },
-    {
-      title: "受伤 Hurt",
-      frames: [
-        { id: "hurt_down", label: "受伤 · 面向下" },
-        { id: "hurt_up", label: "受伤 · 面向上" },
-        { id: "hurt_side", label: "受伤 · 侧身" }
-      ]
-    },
-    {
-      title: "使用道具 Item",
-      frames: [
-        { id: "item_use", label: "使用主动道具" },
-        { id: "item_charge", label: "主动道具蓄力" }
-      ]
-    },
-    {
-      title: "跳跃 Jump",
-      frames: [
-        { id: "jump_start", label: "跳跃开始" },
-        { id: "jump_land", label: "落地" }
-      ]
-    },
-    {
-      title: "道具装扮 Cosmetics",
-      frames: [
-        { id: "item_hat", label: "头部装扮" },
-        { id: "item_body", label: "身体装扮" }
-      ]
-    }
-  ];
+  const GRID_SIZE = schema.gridSize;
+  const CANVAS_SIZE = schema.canvasSize || 512;
+  const PIXEL_SIZE = CANVAS_SIZE / GRID_SIZE;
+  const FRAME_GROUPS = schema.groups || [];
+  const FRAME_ALIAS_RULES = schema.aliases || [];
+  const FRAME_IDS = FRAME_GROUPS.flatMap(group => group.frames.map(frame => frame.id));
 
   const frameCanvas = document.getElementById("skinCanvas");
   const ctx = frameCanvas.getContext("2d");
+  frameCanvas.width = CANVAS_SIZE;
+  frameCanvas.height = CANVAS_SIZE;
 
   const colorPicker = document.getElementById("colorPicker");
   const bgColorPicker = document.getElementById("backgroundColor");
@@ -91,7 +43,7 @@
   const skinNotesInput = document.getElementById("skinNotes");
 
   const frames = new Map();
-  let currentFrameId = FRAME_GROUPS[0].frames[0].id;
+  let currentFrameId = FRAME_IDS[0] || null;
   let isDrawing = false;
   let lastPixel = null;
   let lastDrawnPixel = null;
@@ -100,12 +52,48 @@
     return Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(null));
   }
 
+  function cloneFrameData(frameData) {
+    return frameData.map(row => row.slice());
+  }
+
+  function normaliseImportedFrames(importedFrames) {
+    const normalised = new Map();
+    if (importedFrames && typeof importedFrames === "object") {
+      Object.entries(importedFrames).forEach(([frameId, frameData]) => {
+        if (Array.isArray(frameData)) {
+          normalised.set(frameId, cloneFrameData(frameData));
+        }
+      });
+    }
+
+    FRAME_ALIAS_RULES.forEach(rule => {
+      const sourceId = (rule.sources || []).find(candidate => normalised.has(candidate));
+      if (!sourceId) return;
+      const sourceFrame = normalised.get(sourceId);
+      (rule.targets || []).forEach(targetId => {
+        if (!normalised.has(targetId)) {
+          normalised.set(targetId, cloneFrameData(sourceFrame));
+        }
+      });
+      if (rule.removeSource !== false) {
+        (rule.sources || []).forEach(candidate => normalised.delete(candidate));
+      }
+    });
+
+    const ordered = new Map();
+    FRAME_IDS.forEach(frameId => {
+      if (normalised.has(frameId)) {
+        ordered.set(frameId, normalised.get(frameId));
+      }
+    });
+    return ordered;
+  }
+
   function initFrames() {
+    frames.clear();
     FRAME_GROUPS.forEach(group => {
       group.frames.forEach(frame => {
-        if (!frames.has(frame.id)) {
-          frames.set(frame.id, createEmptyFrame());
-        }
+        frames.set(frame.id, createEmptyFrame());
       });
     });
   }
@@ -202,6 +190,10 @@
     const pixel = getPixelFromEvent(event);
     if (!pixel) return;
     const frameData = getCurrentFrame();
+    if (!frameData) {
+      ctx.clearRect(0, 0, frameCanvas.width, frameCanvas.height);
+      return;
+    }
     const color = eraserToggle.checked ? null : colorPicker.value;
 
     if (event.shiftKey && lastDrawnPixel) {
@@ -278,6 +270,7 @@
   }
 
   function clearCurrentFrame() {
+    if (!currentFrameId) return;
     frames.set(currentFrameId, createEmptyFrame());
     drawCanvas();
     updatePreviewCell(currentFrameId);
@@ -285,6 +278,7 @@
 
   function mirrorFrame(horizontal = true) {
     const frameData = getCurrentFrame();
+    if (!frameData) return;
     const mirrored = createEmptyFrame();
 
     for (let y = 0; y < GRID_SIZE; y++) {
@@ -349,6 +343,10 @@
     if (!canvas) return;
     const context = canvas.getContext("2d");
     const frameData = frames.get(frameId);
+    if (!frameData) {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      return;
+    }
     context.clearRect(0, 0, canvas.width, canvas.height);
     for (let y = 0; y < GRID_SIZE; y++) {
       for (let x = 0; x < GRID_SIZE; x++) {
@@ -368,11 +366,13 @@
 
   function buildExportPayload() {
     const framesObject = {};
-    frames.forEach((value, key) => {
-      framesObject[key] = value;
+    FRAME_IDS.forEach(frameId => {
+      const frameData = frames.get(frameId) || createEmptyFrame();
+      framesObject[frameId] = cloneFrameData(frameData);
     });
 
     return {
+      formatVersion: schema.formatVersion,
       meta: {
         name: skinNameInput.value || "未命名皮肤",
         author: skinAuthorInput.value || "匿名",
@@ -385,7 +385,8 @@
       colors: {
         palette: Array.from(paletteEl.querySelectorAll("button")).map(btn => btn.title),
         background: bgColorPicker.value
-      }
+      },
+      gridSize: GRID_SIZE
     };
   }
 
@@ -451,24 +452,22 @@
     if (!data || typeof data !== "object") throw new Error("无效数据");
     if (!data.frames) throw new Error("缺少帧信息");
 
-    const gridSize = data?.meta?.gridSize || GRID_SIZE;
+    const formatVersion = data?.formatVersion ?? data?.meta?.formatVersion;
+    if (formatVersion != null && formatVersion !== schema.formatVersion) {
+      throw new Error(`格式版本不匹配：期望 ${schema.formatVersion}，收到 ${formatVersion}`);
+    }
+
+    const gridSize = data?.gridSize || data?.meta?.gridSize || GRID_SIZE;
     if (gridSize !== GRID_SIZE) {
       throw new Error(`网格尺寸不匹配：期望 ${GRID_SIZE}，收到 ${gridSize}`);
     }
 
-    frames.clear();
-    Object.keys(data.frames).forEach(frameId => {
-      const frameData = data.frames[frameId];
-      if (!Array.isArray(frameData)) return;
-      frames.set(frameId, frameData.map(row => row.slice()));
-    });
-
-    FRAME_GROUPS.forEach(group => {
-      group.frames.forEach(frame => {
-        if (!frames.has(frame.id)) {
-          frames.set(frame.id, createEmptyFrame());
-        }
-      });
+    const normalised = normaliseImportedFrames(data.frames || {});
+    initFrames();
+    normalised.forEach((value, key) => {
+      if (frames.has(key)) {
+        frames.set(key, cloneFrameData(value));
+      }
     });
 
     skinNameInput.value = data?.meta?.name || "";
@@ -494,7 +493,7 @@
     });
 
     if (!frames.has(currentFrameId)) {
-      currentFrameId = FRAME_GROUPS[0].frames[0].id;
+      currentFrameId = FRAME_IDS[0] || null;
     }
 
     renderFrameList();
@@ -504,6 +503,9 @@
 
   function init() {
     initFrames();
+    if (!currentFrameId && FRAME_IDS.length > 0) {
+      currentFrameId = FRAME_IDS[0];
+    }
     renderFrameList();
     buildPreviewGrid();
     drawCanvas();
