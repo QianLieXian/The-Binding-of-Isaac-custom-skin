@@ -37,12 +37,13 @@ local function colour(r, g, b, a)
   return tone
 end
 
-function CharacterSelectUi.new(mod, manager, persistentState)
+function CharacterSelectUi.new(mod, manager, persistentState, baseCharacters)
   local self = setmetatable({}, CharacterSelectUi)
   self.mod = mod
   self.manager = manager
   self.state = persistentState or {}
   self.game = Game()
+  self.baseCharacters = baseCharacters or {}
   self.characterStates = build_character_state_list()
   self.font = Font()
   self.font:Load("font/terminus.fnt")
@@ -54,9 +55,11 @@ function CharacterSelectUi.new(mod, manager, persistentState)
   self.shadowColor = colour(0, 0, 0, 0.75)
   self.focused = false
   self.menuOpen = false
+  self.mode = "skin"
   self.controllerIndex = 0
   self.cachedSkins = {}
   self.selectionIndex = 1
+  self.baseSelectionIndex = 1
   self.scrollOffset = 0
   self.maxVisibleEntries = 6
   self.lastRefreshFrame = -1
@@ -74,7 +77,24 @@ function CharacterSelectUi.new(mod, manager, persistentState)
     [ButtonAction.ACTION_MENUTAB] = true,
   }
   self:RefreshSkins(true)
+  self.baseSelectionIndex = self:FindBaseSelectionIndex(self.state.lastBaseCharacterId)
   return self
+end
+
+function CharacterSelectUi:FindBaseSelectionIndex(id)
+  if not id then
+    return 1
+  end
+  for index, entry in ipairs(self.baseCharacters) do
+    if entry.id == id then
+      return index
+    end
+  end
+  return 1
+end
+
+function CharacterSelectUi:GetBaseEntry(index)
+  return self.baseCharacters[index or self.baseSelectionIndex]
 end
 
 function CharacterSelectUi:IsCharacterSelect()
@@ -92,6 +112,7 @@ end
 function CharacterSelectUi:SetActiveSkinId(id)
   self.state.selectedSkinId = id or ""
   self.selectionIndex = self:FindSelectionIndex(self.state.selectedSkinId)
+  self.baseSelectionIndex = self:FindBaseSelectionIndex(self.state.lastBaseCharacterId)
   self:ClampScrollToSelection()
 end
 
@@ -104,7 +125,7 @@ function CharacterSelectUi:RefreshSkins(force)
       id = "",
       name = "默认外观",
       author = "原版",
-      baseCharacter = self.state.lastBaseCharacter or "Isaac",
+      baseCharacter = self.state.lastBaseCharacterId or (self.baseCharacters[1] and self.baseCharacters[1].id) or "Isaac",
       notes = "使用原版角色皮肤",
     },
   }
@@ -166,16 +187,51 @@ function CharacterSelectUi:MoveSelection(delta)
   end
 end
 
+function CharacterSelectUi:MoveBaseSelection(delta)
+  local total = #self.baseCharacters
+  if total == 0 then
+    return
+  end
+  local target = self.baseSelectionIndex + delta
+  if target < 1 then
+    target = 1
+  elseif target > total then
+    target = total
+  end
+  self.baseSelectionIndex = target
+end
+
 function CharacterSelectUi:ConfirmSelection()
   local entry = self.cachedSkins[self.selectionIndex]
   if not entry then
     return
   end
-  self.state.lastBaseCharacter = entry.baseCharacter or self.state.lastBaseCharacter
-  self.mod:OnSkinSelected(entry)
-  self:SetActiveSkinId(entry.id)
+  if self.mode == "skin" then
+    if entry.id == "" then
+      entry.baseCharacter = self.state.lastBaseCharacterId
+      entry.selectedBase = self:GetBaseEntry()
+      self.mod:OnSkinSelected(entry)
+      self:SetActiveSkinId(entry.id)
+      self.menuOpen = false
+      self.focused = false
+    else
+      self.mode = "base"
+      self.baseSelectionIndex = self:FindBaseSelectionIndex(entry.baseCharacter or self.state.lastBaseCharacterId)
+    end
+    return
+  end
+
+  local baseEntry = self:GetBaseEntry()
+  if baseEntry then
+    entry.baseCharacter = baseEntry.id
+    entry.selectedBase = baseEntry
+    self.state.lastBaseCharacterId = baseEntry.id
+    self.mod:OnSkinSelected(entry)
+    self:SetActiveSkinId(entry.id)
+  end
   self.menuOpen = false
   self.focused = false
+  self.mode = "skin"
 end
 
 function CharacterSelectUi:HandleNavigation()
@@ -185,7 +241,9 @@ function CharacterSelectUi:HandleNavigation()
   local input = Input
   local controller = self.controllerIndex
   if input:IsActionTriggered(ButtonAction.ACTION_MENUBACK, controller) then
-    if self.menuOpen then
+    if self.mode == "base" then
+      self.mode = "skin"
+    elseif self.menuOpen then
       self.menuOpen = false
     else
       self.focused = false
@@ -194,10 +252,21 @@ function CharacterSelectUi:HandleNavigation()
   end
   if not self.menuOpen and input:IsActionTriggered(ButtonAction.ACTION_MENUCONFIRM, controller) then
     self.menuOpen = true
+    self.mode = "skin"
     self:RefreshSkins(true)
     return
   end
   if not self.menuOpen then
+    return
+  end
+  if self.mode == "base" then
+    if input:IsActionTriggered(ButtonAction.ACTION_MENUUP, controller) then
+      self:MoveBaseSelection(-1)
+    elseif input:IsActionTriggered(ButtonAction.ACTION_MENUDOWN, controller) then
+      self:MoveBaseSelection(1)
+    elseif input:IsActionTriggered(ButtonAction.ACTION_MENUCONFIRM, controller) then
+      self:ConfirmSelection()
+    end
     return
   end
   if input:IsActionTriggered(ButtonAction.ACTION_MENUUP, controller) then
@@ -217,6 +286,7 @@ function CharacterSelectUi:Update()
   if not self:IsCharacterSelect() then
     self.focused = false
     self.menuOpen = false
+    self.mode = "skin"
     self:RefreshSkins(true)
     return
   end
@@ -226,12 +296,15 @@ function CharacterSelectUi:Update()
     if not self.focused then
       self.focused = true
       self.menuOpen = true
+      self.mode = "skin"
       self:RefreshSkins(true)
     else
       if self.menuOpen then
         self.menuOpen = false
+        self.mode = "skin"
       else
         self.focused = false
+        self.mode = "skin"
       end
     end
   end
@@ -305,6 +378,25 @@ function CharacterSelectUi:RenderList(startY)
   end
 end
 
+function CharacterSelectUi:RenderBaseSelection(startY)
+  local x = self.slotPosition.X + self.slotPadding
+  local y = startY
+  local total = #self.baseCharacters
+  if total == 0 then
+    draw_shadowed(self.smallFont, "暂无可选基础角色", x, y, self.mutedColor, self.shadowColor)
+    return
+  end
+  for index, entry in ipairs(self.baseCharacters) do
+    local isSelected = index == self.baseSelectionIndex
+    local marker = isSelected and "▶" or ""
+    local titleColor = isSelected and self.primaryColor or self.textColor
+    draw_shadowed(self.smallFont, string.format("%s%s", marker, entry.name or entry.id), x, y, titleColor, self.shadowColor)
+    y = y + self.slotLineHeight
+    draw_shadowed(self.smallFont, string.format("ID：%s", entry.id), x + 12, y, self.mutedColor, self.shadowColor)
+    y = y + self.slotLineHeight
+  end
+end
+
 function CharacterSelectUi:RenderStatusFooter(baseY)
   local x = self.slotPosition.X + self.slotPadding
   local y = baseY + self.slotLineHeight
@@ -320,10 +412,18 @@ function CharacterSelectUi:RenderStatusFooter(baseY)
     end
   end
   y = y + self.slotLineHeight
+  local baseIndex = self:FindBaseSelectionIndex(self.state.lastBaseCharacterId)
+  local baseEntry = self:GetBaseEntry(baseIndex)
+  if baseEntry then
+    draw_shadowed(self.smallFont, "基础角色：" .. baseEntry.name .. " (" .. baseEntry.id .. ")", x, y, self.mutedColor, self.shadowColor)
+    y = y + self.slotLineHeight
+  end
   if not self.focused then
     draw_shadowed(self.smallFont, "按 Tab 聚焦皮肤入口", x, y, self.mutedColor, self.shadowColor)
   elseif not self.menuOpen then
     draw_shadowed(self.smallFont, "按确认打开皮肤列表", x, y, self.mutedColor, self.shadowColor)
+  elseif self.mode == "base" then
+    draw_shadowed(self.smallFont, "选择基础角色：方向键移动，确认应用", x, y, self.mutedColor, self.shadowColor)
   else
     draw_shadowed(self.smallFont, "确认应用 / 返回关闭", x, y, self.mutedColor, self.shadowColor)
   end
@@ -334,9 +434,14 @@ function CharacterSelectUi:Render()
     return
   end
   local baseY = self:RenderSlotSkeleton()
-  draw_shadowed(self.font, "自定义皮肤入口", self.slotPosition.X + self.slotPadding, baseY - self.slotLineHeight, self.textColor, self.shadowColor)
+  local titleX = self.slotPosition.X + self.slotPadding
+  draw_shadowed(self.font, "◈ 自定义皮肤入口", titleX, baseY - self.slotLineHeight, self.textColor, self.shadowColor)
   if self.menuOpen then
-    self:RenderList(baseY)
+    if self.mode == "base" then
+      self:RenderBaseSelection(baseY)
+    else
+      self:RenderList(baseY)
+    end
   else
     local x = self.slotPosition.X + self.slotPadding
     local y = baseY
@@ -352,6 +457,12 @@ function CharacterSelectUi:Render()
       end
     else
       draw_shadowed(self.smallFont, "当前沿用原版外观", x, y, self.textColor, self.shadowColor)
+    end
+    y = y + self.slotLineHeight
+    local baseIndex = self:FindBaseSelectionIndex(self.state.lastBaseCharacterId)
+    local baseEntry = self:GetBaseEntry(baseIndex)
+    if baseEntry then
+      draw_shadowed(self.smallFont, "基础角色：" .. baseEntry.name .. " (" .. baseEntry.id .. ")", x, y, self.mutedColor, self.shadowColor)
     end
   end
   local footerBase = self.slotPosition.Y + (self.maxVisibleEntries * 2 + 3) * self.slotLineHeight

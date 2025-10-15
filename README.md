@@ -44,27 +44,30 @@
 
 ```bash
 python tools/build_skin_manifest.py
+python tools/build_skin_textures.py
 ```
 
-该脚本会校验 `mod/exported_skins/` 目录下所有皮肤文件、刷新上述 schema 映射，并生成最新的 `mod/exported_skins/skins_manifest.json` 供游戏读取。若仅需校验而不想改写文件，可添加 `--check-only` 选项。仓库附带的 `example_blank.isaacskin` 展示了完整字段和帧清单，可作为创作新皮肤的起点或验证工具链是否运行正常。
+上述脚本会校验 `mod/exported_skins/` 目录下所有皮肤文件、刷新 schema 映射，并生成最新的 `mod/exported_skins/skins_manifest.json`。随后 `build_skin_textures.py` 会根据 `schema/frame_layouts.json` 中的帧布局，把 `.isaacskin` 中的像素自动转换为 `mods/aaa_custom_skin_loader/gfx/custom_skins/<皮肤 ID>/` 下的 PNG 纹理，供游戏内的 `ReplaceSpritesheet` 调用。若仅需校验而不想改写文件，可为清单脚本添加 `--check-only` 选项。仓库附带的 `example_blank.isaacskin` 展示了完整字段和帧清单，可作为创作新皮肤的起点或验证工具链是否运行正常。
 
 ## Mod 运行机制
 
 `mod/` 目录下包含完整的游戏端实现：
 
-- `main.lua`：注册 Mod 并在游戏启动时自动扫描皮肤，提供 `skinlist`/`skinreload` 控制台命令用于调试。
+- `main.lua`：注册 Mod 并在游戏启动时自动扫描皮肤，提供 `skinlist`/`skinreload` 控制台命令用于调试，并在开局或命令热重载后为玩家替换皮肤纹理。
 - `scripts/json.lua`：轻量 JSON 解析器，负责读取 `.isaacskin` 与清单文件。
 - `scripts/skin_manager.lua`：核心逻辑，校验帧完整性、缓存可用皮肤并对外暴露查询接口。
-- `scripts/character_select.lua`：在角色选择界面绘制“自定义皮肤入口”，处理 Tab 聚焦、列表滚动与确认选择，并把结果写入存档。
+- `scripts/character_select.lua`：在角色选择界面绘制“自定义皮肤入口”，处理 Tab 聚焦、皮肤与基础角色双层选单，并把结果写入存档。
+- `scripts/skin_renderer.lua`：根据生成的 PNG 纹理替换玩家实体的 `ReplaceSpritesheet`，确保游戏内外观与导入皮肤一致。
+- `scripts/base_characters.lua`：列出可选基础角色与对应的 `PlayerType`，便于 UI 与保存逻辑复用。
 - `metadata.xml`：声明 Mod 元数据，方便在游戏内识别。
 
 在游戏控制台执行 `skinlist` 可以快速确认皮肤是否被正确解析。
 
 ### 自定义皮肤入口操作指南
 
-- 在角色选择界面按下 <kbd>Tab</kbd> 可将焦点切换到右侧的“自定义皮肤入口”面板；再次按 <kbd>Tab</kbd> 或 <kbd>Esc</kbd> 即可回到原版角色网格。
-- 焦点处于面板时，使用方向键逐项浏览皮肤列表（左右键会以 10 帧为步长翻页），按确认键应用所选皮肤；选择第一项“默认外观”即可恢复原版角色。
-- 面板底部实时显示当前套用的皮肤名称、作者与基础角色信息，所有选择结果都会写入存档并在下次进入角色选择界面时自动恢复，可配合 `skinreload` 命令热刷新列表。
+- 在角色选择界面按下 <kbd>Tab</kbd> 可将焦点切换到右侧的“自定义皮肤入口”面板（标题前的 `◈` 图标便于辨识）；再次按 <kbd>Tab</kbd> 或 <kbd>Esc</kbd> 即可回到原版角色网格。
+- 焦点处于面板时，使用上下方向键逐项浏览皮肤列表（左右键会以 10 帧为步长翻页）。按一次确认键进入“基础角色选择”子列表，继续使用上下方向键挑选最终希望操控的原版角色，再按确认键即应用皮肤与基础角色；按返回键可退回皮肤列表。若直接选择第一项“默认外观”，会立即还原原版外观并保留最近一次选择的基础角色。
+- 面板底部实时显示当前套用的皮肤、作者与基础角色信息，所有选择结果都会写入存档并在下次进入角色选择界面时自动恢复，可配合 `skinreload` 命令热刷新列表。
 
 ## 后续开发建议
 
