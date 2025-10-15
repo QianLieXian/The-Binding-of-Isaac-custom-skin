@@ -42,6 +42,9 @@ function CharacterSelectUi.new(mod, manager, persistentState, baseCharacters)
   self.mod = mod
   self.manager = manager
   self.state = persistentState or {}
+  if self.state.hasSeenSkinIntro == nil then
+    self.state.hasSeenSkinIntro = false
+  end
   self.game = Game()
   self.baseCharacters = baseCharacters or {}
   self.characterStates = build_character_state_list()
@@ -291,6 +294,16 @@ function CharacterSelectUi:Update()
     return
   end
   self:RefreshSkins()
+  if not self.state.hasSeenSkinIntro then
+    self.focused = true
+    self.menuOpen = true
+    self.mode = "skin"
+    self:RefreshSkins(true)
+    self.state.hasSeenSkinIntro = true
+    if self.mod and self.mod.MarkSkinIntroSeen then
+      self.mod:MarkSkinIntroSeen()
+    end
+  end
   local input = Input
   if input:IsActionTriggered(ButtonAction.ACTION_MENUTAB, self.controllerIndex) then
     if not self.focused then
