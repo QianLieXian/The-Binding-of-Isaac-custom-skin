@@ -10,6 +10,12 @@
   const FRAME_GROUPS = schema.groups || [];
   const FRAME_ALIAS_RULES = schema.aliases || [];
   const FRAME_IDS = FRAME_GROUPS.flatMap(group => group.frames.map(frame => frame.id));
+  const FRAME_LABELS = {};
+  FRAME_GROUPS.forEach(group => {
+    group.frames.forEach(frame => {
+      FRAME_LABELS[frame.id] = frame.label;
+    });
+  });
 
   const frameCanvas = document.getElementById("skinCanvas");
   const ctx = frameCanvas.getContext("2d");
@@ -25,6 +31,7 @@
   const clearFrameBtn = document.getElementById("clearFrame");
   const mirrorHorizontalBtn = document.getElementById("mirrorHorizontal");
   const mirrorVerticalBtn = document.getElementById("mirrorVertical");
+  const copyPreviousBtn = document.getElementById("copyPrevious");
 
   const frameListEl = document.getElementById("frameList");
   const paletteEl = document.getElementById("customPalette");
@@ -315,6 +322,25 @@
       eraserToggle.checked = false;
     });
     paletteEl.appendChild(btn);
+  });
+
+  copyPreviousBtn.addEventListener("click", () => {
+    const index = FRAME_IDS.indexOf(currentFrameId);
+    if (index <= 0) {
+      showStatus("当前帧没有可复制的上一帧。", "error");
+      return;
+    }
+    const sourceId = FRAME_IDS[index - 1];
+    const sourceFrame = frames.get(sourceId);
+    if (!sourceFrame) {
+      showStatus("上一帧为空，已保持当前帧不变。", "info");
+      return;
+    }
+    frames.set(currentFrameId, cloneFrameData(sourceFrame));
+    drawCanvas();
+    updatePreviewCell(currentFrameId);
+    const label = FRAME_LABELS[sourceId] || sourceId;
+    showStatus(`已从 ${label} 复制像素数据。`, "success");
   });
 
   function buildPreviewGrid() {
