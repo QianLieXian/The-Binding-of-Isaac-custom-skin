@@ -28,6 +28,7 @@ local persistentState = {
   selectedSkinId = nil,
   lastBaseCharacterId = "Isaac",
   lastBasePlayerType = PlayerType.PLAYER_ISAAC,
+  hasSeenSkinIntro = false,
 }
 
 local function decode_saved_state()
@@ -49,6 +50,9 @@ local function decode_saved_state()
   if data.lastBasePlayerType then
     persistentState.lastBasePlayerType = data.lastBasePlayerType
   end
+  if data.hasSeenSkinIntro ~= nil then
+    persistentState.hasSeenSkinIntro = data.hasSeenSkinIntro and true or false
+  end
 end
 
 local function encode_saved_state()
@@ -56,6 +60,7 @@ local function encode_saved_state()
     selectedSkinId = persistentState.selectedSkinId,
     lastBaseCharacterId = persistentState.lastBaseCharacterId,
     lastBasePlayerType = persistentState.lastBasePlayerType,
+    hasSeenSkinIntro = persistentState.hasSeenSkinIntro,
   })
   if not ok then
     Isaac.DebugString("[CustomSkinLoader] 无法序列化存档数据: " .. tostring(payload))
@@ -119,6 +124,14 @@ function CustomSkinMod:GetActiveSkin()
     return nil
   end
   return manager:GetSkin(id)
+end
+
+function CustomSkinMod:MarkSkinIntroSeen()
+  if persistentState.hasSeenSkinIntro then
+    return
+  end
+  persistentState.hasSeenSkinIntro = true
+  save_state_to_disk()
 end
 
 function CustomSkinMod:OnSkinSelected(entry)
