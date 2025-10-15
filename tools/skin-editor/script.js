@@ -27,6 +27,7 @@
   const eraserToggle = document.getElementById("eraserToggle");
   const toggleGrid = document.getElementById("toggleGrid");
   const previewBackground = document.getElementById("previewBackground");
+  const toggleQuadrants = document.getElementById("toggleQuadrants");
 
   const clearFrameBtn = document.getElementById("clearFrame");
   const mirrorHorizontalBtn = document.getElementById("mirrorHorizontal");
@@ -241,6 +242,66 @@
     lastPixel = null;
   });
 
+  function drawLabel(text, x, y, align = "left") {
+    const padding = 4;
+    ctx.save();
+    ctx.font = "12px 'Segoe UI', 'Microsoft YaHei', sans-serif";
+    ctx.textBaseline = "top";
+    ctx.textAlign = align;
+    const metrics = ctx.measureText(text);
+    const width = (metrics.width || text.length * 7) + padding * 2;
+    const height = ((metrics.actualBoundingBoxAscent || 8) + (metrics.actualBoundingBoxDescent || 3)) + padding * 2;
+    let rectX = x;
+    if (align === "center") {
+      rectX -= width / 2;
+    } else if (align === "right") {
+      rectX -= width - padding;
+    } else {
+      rectX -= padding;
+    }
+    const rectY = y - padding;
+    ctx.fillStyle = "rgba(10, 14, 24, 0.68)";
+    ctx.fillRect(rectX, rectY, width, height);
+    ctx.fillStyle = "rgba(255, 235, 160, 0.95)";
+    ctx.fillText(text, x, y);
+    ctx.restore();
+  }
+
+  function drawQuadrantOverlay() {
+    if (!toggleQuadrants || !toggleQuadrants.checked) {
+      return;
+    }
+    const half = GRID_SIZE / 2;
+    const centerX = half * PIXEL_SIZE;
+    const centerY = half * PIXEL_SIZE;
+
+    ctx.save();
+    ctx.strokeStyle = "rgba(255, 211, 92, 0.6)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(centerX + 0.5, 0);
+    ctx.lineTo(centerX + 0.5, GRID_SIZE * PIXEL_SIZE);
+    ctx.moveTo(0, centerY + 0.5);
+    ctx.lineTo(GRID_SIZE * PIXEL_SIZE, centerY + 0.5);
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    drawLabel("QⅠ (+X, -Y)", centerX + 14, centerY - 30, "left");
+    drawLabel("QⅡ (-X, -Y)", centerX - 14, centerY - 30, "right");
+    drawLabel("QⅢ (-X, +Y)", centerX - 14, centerY + 12, "right");
+    drawLabel("QⅣ (+X, +Y)", centerX + 14, centerY + 12, "left");
+    drawLabel("原点 (0, 0)", centerX + 14, centerY - 8, "left");
+    ctx.restore();
+
+    ctx.save();
+    ctx.fillStyle = "rgba(255, 211, 92, 0.85)";
+    ctx.beginPath();
+    ctx.arc(centerX + 0.5, centerY + 0.5, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
   function drawCanvas() {
     const frameData = getCurrentFrame();
     ctx.clearRect(0, 0, frameCanvas.width, frameCanvas.height);
@@ -274,6 +335,8 @@
       }
       ctx.stroke();
     }
+
+    drawQuadrantOverlay();
   }
 
   function clearCurrentFrame() {
@@ -305,7 +368,8 @@
   mirrorHorizontalBtn.addEventListener("click", () => mirrorFrame(true));
   mirrorVerticalBtn.addEventListener("click", () => mirrorFrame(false));
 
-  [colorPicker, bgColorPicker, toggleGrid, previewBackground].forEach(input => {
+  [colorPicker, bgColorPicker, toggleGrid, previewBackground, toggleQuadrants].forEach(input => {
+    if (!input) return;
     input.addEventListener("input", () => {
       drawCanvas();
       updatePreviewCell(currentFrameId);
