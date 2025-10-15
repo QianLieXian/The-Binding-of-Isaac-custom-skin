@@ -1,0 +1,624 @@
+{
+  "sheets": {
+    "0": {
+      "name": "body0",
+      "sheet": "body.png",
+      "layerId": 0
+    },
+    "1": {
+      "name": "head0",
+      "sheet": "head.png",
+      "layerId": 1
+    }
+  },
+  "animations": {
+    "WalkLeft": {
+      "0": [
+        {
+          "index": 0,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 0,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": -100,
+          "yScale": 100
+        },
+        {
+          "index": 1,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 32,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": -100,
+          "yScale": 100
+        },
+        {
+          "index": 2,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 64,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": -100,
+          "yScale": 100
+        },
+        {
+          "index": 3,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 96,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": -100,
+          "yScale": 100
+        },
+        {
+          "index": 4,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 128,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": -100,
+          "yScale": 100
+        },
+        {
+          "index": 5,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 160,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": -100,
+          "yScale": 100
+        },
+        {
+          "index": 6,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 192,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": -100,
+          "yScale": 100
+        },
+        {
+          "index": 7,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 224,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": -100,
+          "yScale": 100
+        },
+        {
+          "index": 8,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 0,
+          "y": 32,
+          "width": 32,
+          "height": 32,
+          "xScale": -100,
+          "yScale": 100
+        },
+        {
+          "index": 9,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 32,
+          "y": 32,
+          "width": 32,
+          "height": 32,
+          "xScale": -100,
+          "yScale": 100
+        }
+      ]
+    },
+    "WalkUp": {
+      "0": [
+        {
+          "index": 0,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 0,
+          "y": 64,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 1,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 32,
+          "y": 64,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 2,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 64,
+          "y": 64,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 3,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 96,
+          "y": 64,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 4,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 128,
+          "y": 64,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 5,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 160,
+          "y": 64,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 6,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 192,
+          "y": 64,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 7,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 224,
+          "y": 64,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 8,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 0,
+          "y": 96,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 9,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 32,
+          "y": 96,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        }
+      ]
+    },
+    "WalkRight": {
+      "0": [
+        {
+          "index": 0,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 0,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 1,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 32,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 2,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 64,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 3,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 96,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 4,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 128,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 5,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 160,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 6,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 192,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 7,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 224,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 8,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 0,
+          "y": 32,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 9,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 32,
+          "y": 32,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        }
+      ]
+    },
+    "WalkDown": {
+      "0": [
+        {
+          "index": 0,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 0,
+          "y": 64,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 1,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 32,
+          "y": 64,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 2,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 64,
+          "y": 64,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 3,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 96,
+          "y": 64,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 4,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 128,
+          "y": 64,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 5,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 160,
+          "y": 64,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 6,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 192,
+          "y": 64,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 7,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 224,
+          "y": 64,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 8,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 0,
+          "y": 96,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 9,
+          "sheet": "body.png",
+          "layerName": "body0",
+          "layerId": 0,
+          "x": 32,
+          "y": 96,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        }
+      ]
+    },
+    "HeadLeft": {
+      "1": [
+        {
+          "index": 0,
+          "sheet": "head.png",
+          "layerName": "head0",
+          "layerId": 1,
+          "x": 64,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": -100,
+          "yScale": 100
+        },
+        {
+          "index": 1,
+          "sheet": "head.png",
+          "layerName": "head0",
+          "layerId": 1,
+          "x": 96,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": -100,
+          "yScale": 100
+        }
+      ]
+    },
+    "HeadUp": {
+      "1": [
+        {
+          "index": 0,
+          "sheet": "head.png",
+          "layerName": "head0",
+          "layerId": 1,
+          "x": 128,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 1,
+          "sheet": "head.png",
+          "layerName": "head0",
+          "layerId": 1,
+          "x": 160,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        }
+      ]
+    },
+    "HeadRight": {
+      "1": [
+        {
+          "index": 0,
+          "sheet": "head.png",
+          "layerName": "head0",
+          "layerId": 1,
+          "x": 64,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 1,
+          "sheet": "head.png",
+          "layerName": "head0",
+          "layerId": 1,
+          "x": 96,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        }
+      ]
+    },
+    "HeadDown": {
+      "1": [
+        {
+          "index": 0,
+          "sheet": "head.png",
+          "layerName": "head0",
+          "layerId": 1,
+          "x": 0,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        },
+        {
+          "index": 1,
+          "sheet": "head.png",
+          "layerName": "head0",
+          "layerId": 1,
+          "x": 32,
+          "y": 0,
+          "width": 32,
+          "height": 32,
+          "xScale": 100,
+          "yScale": 100
+        }
+      ]
+    }
+  }
+}

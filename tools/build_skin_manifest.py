@@ -17,6 +17,7 @@ from typing import Any, Dict, Iterable, List, Tuple
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_PATH = REPO_ROOT / "schema" / "skin_schema.json"
+FRAME_LAYOUTS_PATH = REPO_ROOT / "schema" / "frame_layouts.json"
 WEB_SCHEMA_JS_PATH = REPO_ROOT / "tools" / "skin-editor" / "schema.js"
 LUA_SCHEMA_PATH = REPO_ROOT / "mod" / "scripts" / "skin_schema.lua"
 DEFAULT_EXPORT_DIR = REPO_ROOT / "mod" / "exported_skins"
@@ -75,6 +76,10 @@ def build_lua_schema(schema: Dict[str, Any]) -> str:
             frame_id = frame["id"]
             required_frames.append(frame_id)
             frame_lookup[frame_id] = frame
+    frame_layouts = None
+    if FRAME_LAYOUTS_PATH.exists():
+        frame_layouts = json.loads(FRAME_LAYOUTS_PATH.read_text(encoding="utf-8"))
+
     lua_schema = {
         "formatVersion": schema["formatVersion"],
         "gridSize": schema["gridSize"],
@@ -84,6 +89,8 @@ def build_lua_schema(schema: Dict[str, Any]) -> str:
         "aliasRules": schema.get("aliases", []),
     }
     lua_schema["frameLookup"] = frame_lookup
+    if frame_layouts is not None:
+        lua_schema["frameLayouts"] = frame_layouts
     chunks = ["local schema = {}", ""]
     for key, value in lua_schema.items():
         chunks.append(f"schema.{key} = {lua_table(value, 0)}")

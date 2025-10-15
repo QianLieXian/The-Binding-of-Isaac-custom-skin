@@ -1,3 +1,4 @@
 mod/exported_skins/*.isaacskin
 !mod/exported_skins/example_blank.isaacskin
 __pycache__/
+mod/gfx/custom_skins/

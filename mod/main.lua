@@ -1,4 +1,4 @@
-local CustomSkinMod = RegisterMod("Custom Skin Loader", 1)
+local CustomSkinMod = RegisterMod("AAA Custom Skin Loader", 1)
 
 local function include_script(name)
   local path = "scripts/" .. name .. ".lua"
@@ -16,14 +16,18 @@ end
 local json = include_script("json")
 local schema = include_script("skin_schema")
 local SkinManager = include_script("skin_manager")
+local SkinRenderer = include_script("skin_renderer")
 local CharacterSelectUi = include_script("character_select")
+local BaseCharacters = include_script("base_characters")
 
 local manager = SkinManager.new(json, schema)
+local renderer = SkinRenderer.new(CustomSkinMod)
 CustomSkinMod.SkinManager = manager
 
 local persistentState = {
   selectedSkinId = nil,
-  lastBaseCharacter = "Isaac",
+  lastBaseCharacterId = "Isaac",
+  lastBasePlayerType = PlayerType.PLAYER_ISAAC,
 }
 
 local function decode_saved_state()
@@ -39,15 +43,19 @@ local function decode_saved_state()
     return
   end
   persistentState.selectedSkinId = data.selectedSkinId
-  if data.lastBaseCharacter then
-    persistentState.lastBaseCharacter = data.lastBaseCharacter
+  if data.lastBaseCharacterId then
+    persistentState.lastBaseCharacterId = data.lastBaseCharacterId
+  end
+  if data.lastBasePlayerType then
+    persistentState.lastBasePlayerType = data.lastBasePlayerType
   end
 end
 
 local function encode_saved_state()
   local ok, payload = pcall(json.encode, {
     selectedSkinId = persistentState.selectedSkinId,
-    lastBaseCharacter = persistentState.lastBaseCharacter,
+    lastBaseCharacterId = persistentState.lastBaseCharacterId,
+    lastBasePlayerType = persistentState.lastBasePlayerType,
   })
   if not ok then
     Isaac.DebugString("[CustomSkinLoader] 无法序列化存档数据: " .. tostring(payload))
@@ -58,7 +66,7 @@ end
 
 decode_saved_state()
 
-local characterSelectUi = CharacterSelectUi.new(CustomSkinMod, manager, persistentState)
+local characterSelectUi = CharacterSelectUi.new(CustomSkinMod, manager, persistentState, BaseCharacters)
 CustomSkinMod.CharacterSelectUi = characterSelectUi
 
 local function log(message)
@@ -70,6 +78,25 @@ local function log(message)
 end
 
 CustomSkinMod.Log = log
+
+local function find_base_character(id)
+  for _, entry in ipairs(BaseCharacters) do
+    if entry.id == id then
+      return entry
+    end
+  end
+  return BaseCharacters[1]
+end
+
+local function apply_skin_to_player(player)
+  if not player then
+    return
+  end
+  local skin = CustomSkinMod:GetActiveSkin()
+  if skin then
+    renderer:Apply(player, skin)
+  end
+end
 
 local function save_state_to_disk()
   local payload = encode_saved_state()
@@ -102,8 +129,13 @@ function CustomSkinMod:OnSkinSelected(entry)
     return
   end
   persistentState.selectedSkinId = entry.id and entry.id ~= "" and entry.id or nil
-  if entry.baseCharacter then
-    persistentState.lastBaseCharacter = entry.baseCharacter
+  if entry.selectedBase and entry.selectedBase.playerType then
+    persistentState.lastBaseCharacterId = entry.selectedBase.id or persistentState.lastBaseCharacterId
+    persistentState.lastBasePlayerType = entry.selectedBase.playerType
+  elseif entry.baseCharacter then
+    local baseEntry = find_base_character(entry.baseCharacter)
+    persistentState.lastBaseCharacterId = baseEntry.id
+    persistentState.lastBasePlayerType = baseEntry.playerType
   end
   if persistentState.selectedSkinId then
     log(string.format("已选择皮肤 %s (作者 %s)", entry.name or persistentState.selectedSkinId, entry.author or "未知"))
@@ -126,6 +158,12 @@ CustomSkinMod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, function(_, isConti
   elseif not isContinued then
     manager:LogAvailableSkins()
   end
+  for playerIndex = 0, Game():GetNumPlayers() - 1 do
+    local player = Isaac.GetPlayer(playerIndex)
+    if player then
+      apply_skin_to_player(player)
+    end
+  end
 end)
 
 CustomSkinMod:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
@@ -142,6 +180,17 @@ end)
 
 CustomSkinMod:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, function(_, player)
   characterSelectUi:OnPlayerInit(player)
+  if player:GetPlayerIndex() ~= 0 then
+    return
+  end
+  local targetType = persistentState.lastBasePlayerType
+  local shouldForceReload = persistentState.selectedSkinId == nil
+  if targetType and player.FrameCount <= 0 then
+    if player:GetPlayerType() ~= targetType or shouldForceReload then
+      player:ChangePlayerType(targetType)
+    end
+  end
+  apply_skin_to_player(player)
 end)
 
 CustomSkinMod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, function()
@@ -154,6 +203,12 @@ CustomSkinMod:AddCallback(ModCallbacks.MC_EXECUTE_CMD, function(_, command, para
     return true
   elseif command == "skinreload" then
     manager:Refresh()
+    for playerIndex = 0, Game():GetNumPlayers() - 1 do
+      local player = Isaac.GetPlayer(playerIndex)
+      if player then
+        apply_skin_to_player(player)
+      end
+    end
     log("已重新扫描 exported_skins 目录")
     return true
   end
