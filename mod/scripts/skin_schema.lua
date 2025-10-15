@@ -710,6 +710,147 @@ schema.groups = {
     },
   },
   {
+    id = "pill",
+    title = "药丸动作 Pills",
+    frames = {
+      {
+        id = "pill_eat_down_1",
+        label = "吃药向下 · 帧 1",
+        anm2 = {
+          file = "001.000_player.anm2",
+          animation = "PillEatDown",
+          frame = 0,
+        },
+      },
+      {
+        id = "pill_eat_down_2",
+        label = "吃药向下 · 帧 2",
+        anm2 = {
+          file = "001.000_player.anm2",
+          animation = "PillEatDown",
+          frame = 1,
+        },
+      },
+      {
+        id = "pill_eat_down_3",
+        label = "吃药向下 · 帧 3",
+        anm2 = {
+          file = "001.000_player.anm2",
+          animation = "PillEatDown",
+          frame = 2,
+        },
+      },
+      {
+        id = "pill_eat_right_1",
+        label = "吃药向右 · 帧 1",
+        anm2 = {
+          file = "001.000_player.anm2",
+          animation = "PillEatRight",
+          frame = 0,
+        },
+      },
+      {
+        id = "pill_eat_right_2",
+        label = "吃药向右 · 帧 2",
+        anm2 = {
+          file = "001.000_player.anm2",
+          animation = "PillEatRight",
+          frame = 1,
+        },
+      },
+      {
+        id = "pill_eat_right_3",
+        label = "吃药向右 · 帧 3",
+        anm2 = {
+          file = "001.000_player.anm2",
+          animation = "PillEatRight",
+          frame = 2,
+        },
+      },
+      {
+        id = "pill_eat_up_1",
+        label = "吃药向上 · 帧 1",
+        anm2 = {
+          file = "001.000_player.anm2",
+          animation = "PillEatUp",
+          frame = 0,
+        },
+      },
+      {
+        id = "pill_eat_up_2",
+        label = "吃药向上 · 帧 2",
+        anm2 = {
+          file = "001.000_player.anm2",
+          animation = "PillEatUp",
+          frame = 1,
+        },
+      },
+      {
+        id = "pill_eat_up_3",
+        label = "吃药向上 · 帧 3",
+        anm2 = {
+          file = "001.000_player.anm2",
+          animation = "PillEatUp",
+          frame = 2,
+        },
+      },
+      {
+        id = "pill_eat_left_1",
+        label = "吃药向左 · 帧 1",
+        anm2 = {
+          file = "001.000_player.anm2",
+          animation = "PillEatLeft",
+          frame = 0,
+        },
+      },
+      {
+        id = "pill_eat_left_2",
+        label = "吃药向左 · 帧 2",
+        anm2 = {
+          file = "001.000_player.anm2",
+          animation = "PillEatLeft",
+          frame = 1,
+        },
+      },
+      {
+        id = "pill_eat_left_3",
+        label = "吃药向左 · 帧 3",
+        anm2 = {
+          file = "001.000_player.anm2",
+          animation = "PillEatLeft",
+          frame = 2,
+        },
+      },
+      {
+        id = "pill_thumbs_up",
+        label = "吃药成功竖大拇指",
+        anm2 = {
+          file = "001.000_player.anm2",
+          animation = "PillThumbsUp",
+          frame = 0,
+        },
+      },
+      {
+        id = "pill_thumbs_down",
+        label = "吃药失误竖下拇指",
+        anm2 = {
+          file = "001.000_player.anm2",
+          animation = "PillThumbsDown",
+          frame = 0,
+        },
+      },
+      {
+        id = "pill_hold_head",
+        label = "吃药抱头难受",
+        anm2 = {
+          file = "001.000_player.anm2",
+          animation = "PillHoldHead",
+          frame = 0,
+        },
+      },
+    },
+  },
+  {
     id = "jump",
     title = "跳跃 Jump",
     frames = {
@@ -824,6 +965,21 @@ schema.requiredFrames = {
   "hurt_left",
   "item_use",
   "item_charge",
+  "pill_eat_down_1",
+  "pill_eat_down_2",
+  "pill_eat_down_3",
+  "pill_eat_right_1",
+  "pill_eat_right_2",
+  "pill_eat_right_3",
+  "pill_eat_up_1",
+  "pill_eat_up_2",
+  "pill_eat_up_3",
+  "pill_eat_left_1",
+  "pill_eat_left_2",
+  "pill_eat_left_3",
+  "pill_thumbs_up",
+  "pill_thumbs_down",
+  "pill_hold_head",
   "jump_start",
   "jump_land",
   "item_hat",
@@ -976,6 +1132,46 @@ schema.aliasRules = {
       "walk_left_08",
       "walk_left_09",
       "walk_left_10",
+    },
+    removeSource = False,
+  },
+  {
+    sources = {
+      "pill_eat_down_1",
+    },
+    targets = {
+      "pill_eat_down_2",
+      "pill_eat_down_3",
+    },
+    removeSource = False,
+  },
+  {
+    sources = {
+      "pill_eat_right_1",
+    },
+    targets = {
+      "pill_eat_right_2",
+      "pill_eat_right_3",
+    },
+    removeSource = False,
+  },
+  {
+    sources = {
+      "pill_eat_up_1",
+    },
+    targets = {
+      "pill_eat_up_2",
+      "pill_eat_up_3",
+    },
+    removeSource = False,
+  },
+  {
+    sources = {
+      "pill_eat_left_1",
+    },
+    targets = {
+      "pill_eat_left_2",
+      "pill_eat_left_3",
     },
     removeSource = False,
   },
@@ -1645,6 +1841,141 @@ schema.frameLookup = {
     anm2 = {
       file = "001.000_player.anm2",
       animation = "UseItemHold",
+      frame = 0,
+    },
+  },
+  pill_eat_down_1 = {
+    id = "pill_eat_down_1",
+    label = "吃药向下 · 帧 1",
+    anm2 = {
+      file = "001.000_player.anm2",
+      animation = "PillEatDown",
+      frame = 0,
+    },
+  },
+  pill_eat_down_2 = {
+    id = "pill_eat_down_2",
+    label = "吃药向下 · 帧 2",
+    anm2 = {
+      file = "001.000_player.anm2",
+      animation = "PillEatDown",
+      frame = 1,
+    },
+  },
+  pill_eat_down_3 = {
+    id = "pill_eat_down_3",
+    label = "吃药向下 · 帧 3",
+    anm2 = {
+      file = "001.000_player.anm2",
+      animation = "PillEatDown",
+      frame = 2,
+    },
+  },
+  pill_eat_right_1 = {
+    id = "pill_eat_right_1",
+    label = "吃药向右 · 帧 1",
+    anm2 = {
+      file = "001.000_player.anm2",
+      animation = "PillEatRight",
+      frame = 0,
+    },
+  },
+  pill_eat_right_2 = {
+    id = "pill_eat_right_2",
+    label = "吃药向右 · 帧 2",
+    anm2 = {
+      file = "001.000_player.anm2",
+      animation = "PillEatRight",
+      frame = 1,
+    },
+  },
+  pill_eat_right_3 = {
+    id = "pill_eat_right_3",
+    label = "吃药向右 · 帧 3",
+    anm2 = {
+      file = "001.000_player.anm2",
+      animation = "PillEatRight",
+      frame = 2,
+    },
+  },
+  pill_eat_up_1 = {
+    id = "pill_eat_up_1",
+    label = "吃药向上 · 帧 1",
+    anm2 = {
+      file = "001.000_player.anm2",
+      animation = "PillEatUp",
+      frame = 0,
+    },
+  },
+  pill_eat_up_2 = {
+    id = "pill_eat_up_2",
+    label = "吃药向上 · 帧 2",
+    anm2 = {
+      file = "001.000_player.anm2",
+      animation = "PillEatUp",
+      frame = 1,
+    },
+  },
+  pill_eat_up_3 = {
+    id = "pill_eat_up_3",
+    label = "吃药向上 · 帧 3",
+    anm2 = {
+      file = "001.000_player.anm2",
+      animation = "PillEatUp",
+      frame = 2,
+    },
+  },
+  pill_eat_left_1 = {
+    id = "pill_eat_left_1",
+    label = "吃药向左 · 帧 1",
+    anm2 = {
+      file = "001.000_player.anm2",
+      animation = "PillEatLeft",
+      frame = 0,
+    },
+  },
+  pill_eat_left_2 = {
+    id = "pill_eat_left_2",
+    label = "吃药向左 · 帧 2",
+    anm2 = {
+      file = "001.000_player.anm2",
+      animation = "PillEatLeft",
+      frame = 1,
+    },
+  },
+  pill_eat_left_3 = {
+    id = "pill_eat_left_3",
+    label = "吃药向左 · 帧 3",
+    anm2 = {
+      file = "001.000_player.anm2",
+      animation = "PillEatLeft",
+      frame = 2,
+    },
+  },
+  pill_thumbs_up = {
+    id = "pill_thumbs_up",
+    label = "吃药成功竖大拇指",
+    anm2 = {
+      file = "001.000_player.anm2",
+      animation = "PillThumbsUp",
+      frame = 0,
+    },
+  },
+  pill_thumbs_down = {
+    id = "pill_thumbs_down",
+    label = "吃药失误竖下拇指",
+    anm2 = {
+      file = "001.000_player.anm2",
+      animation = "PillThumbsDown",
+      frame = 0,
+    },
+  },
+  pill_hold_head = {
+    id = "pill_hold_head",
+    label = "吃药抱头难受",
+    anm2 = {
+      file = "001.000_player.anm2",
+      animation = "PillHoldHead",
       frame = 0,
     },
   },
